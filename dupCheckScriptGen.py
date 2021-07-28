@@ -13,8 +13,18 @@ import snowflake.connector as sf
 
 import pandas as pd
 from tabulate import tabulate
+import pprint
+import pyinputplus as pyip
 
 tableKeysStruct = {}
+
+tableType = ''
+orgDB = ''
+
+tableType = pyip.inputMenu(['Not Network Not Layup','Network Not Layup','Layup'], lettered=False, numbered=True)
+
+orgDB = pyip.inputMenu(['INT_BEAUMONT', 'INT_BRIGHT', 'INT_CHENMED', 'INT_CLOVERNA', 'INT_EVOLENT', 'INT_OSCAR', 'INT_PARADIGM', 'INT_PRIVIA'], lettered=False, numbered=True)
+
 
 
 try:
@@ -23,7 +33,7 @@ try:
         # user=user, # Snowflake user e.g. first_name.last_name@carejourney.com
         user='michael.oconnor@carejourney.com',
         # password=password, # carejourney-prod Okta password
-        password='MYPASSWORD',
+        password='W1xk3dY007&1P@',
         account='carejourney_nci.us-east-1',
         authenticator='externalbrowser',
         warehouse='DEV_BRIGHT', # snowflake warehouse --optional
@@ -32,16 +42,26 @@ try:
 
     sf_cursor = sf_conn.cursor()
 
+    sql = ''
+    tableWoutPK = []
+
     # need access to data_model db in nci
-    sf_cursor.execute('SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema = \'VRDC\' order by table_name')
+    if tableType == 'Not Network Not Layup': #? base 48
+        sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name NOT LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
+    elif tableType == 'Network Not Layup': # 43
+        sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'    
+    else:  # layup 24 includes network_layup
+        sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%LAYUP%\' order by table_name'
+ 
+    sf_cursor.execute(sql)
     df = sf_cursor.fetch_pandas_all()
     singleColTN=df.loc[:,'TABLE_NAME']
 
-    # a list of all tables in the schema, there's 115 in vrdc
+    # a list of all tables in the schema, there's 115 in vrdc in total
     tblList = singleColTN.tolist()
 
     # test with the first 15 tables
-    for i in range(len(tblList)-100):
+    for i in range(len(tblList)):
         # need access to data_model.vrdc schema
         sqlString = 'SHOW PRIMARY KEYS IN TABLE DATA_MODEL.VRDC.' + tblList[i]
         sf_cursor.execute(sqlString)
@@ -63,8 +83,16 @@ try:
             tableKeysStruct[tblList[i]] = tblPKList
         else:
             print(tblList[i] + ' has no keys')
+            tableWoutPK.append(tblList[i])
 
-    print(tableKeysStruct)
+    pprint.pprint(tableKeysStruct)
+
+    # tableKeys = tableKeysStruct.keys()
+    # df3 = pd.DataFrame(tableKeys, columns=["table_name"])
+        # overwrites if exists
+    # df3.to_excel('/Users/michael.oconnor/downloads/myTables3.xlsx',sheet_name=tableType)
+
+    print('tables w/out pks: ', tableWoutPK)
 
 except Exception as e:
     print(e)
