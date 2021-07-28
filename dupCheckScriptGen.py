@@ -33,7 +33,7 @@ try:
         # user=user, # Snowflake user e.g. first_name.last_name@carejourney.com
         user='michael.oconnor@carejourney.com',
         # password=password, # carejourney-prod Okta password
-        password='W1xk3dY007&1P@',
+        password='myPassword',
         account='carejourney_nci.us-east-1',
         authenticator='externalbrowser',
         warehouse='DEV_BRIGHT', # snowflake warehouse --optional
