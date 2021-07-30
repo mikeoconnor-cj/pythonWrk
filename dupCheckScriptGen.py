@@ -15,15 +15,23 @@ import pandas as pd
 from tabulate import tabulate
 import pprint
 import pyinputplus as pyip
+from openpyxl import load_workbook
 
 tableKeysStruct = {}
+
+wb = load_workbook('/Users/michael.oconnor/sfIDFile.xlsx')
+ws = wb.active
+usrID = ws['A2'].value
+pssWrd = ws['B2'].value
+wb.close()
+
 
 tableType = ''
 orgDB = ''
 
 tableType = pyip.inputMenu(['Not Network Not Layup','Network Not Layup','Layup'], lettered=False, numbered=True)
 
-orgDB = pyip.inputMenu(['INT_BEAUMONT', 'INT_BRIGHT', 'INT_CHENMED', 'INT_CLOVERNA', 'INT_EVOLENT', 'INT_OSCAR', 'INT_PARADIGM', 'INT_PRIVIA'], lettered=False, numbered=True)
+orgDB = pyip.inputMenu(['PROD_BEAUMONT', 'PROD_BRIGHT', 'PROD_CHENMED', 'PROD_CLOVERNA', 'PROD_EVOLENT', 'PROD_OSCAR', 'PROD_PARADIGM', 'PROD_PRIVIA'], lettered=False, numbered=True)
 
 
 
@@ -31,9 +39,9 @@ try:
     sf.paramstyle = 'qmark'
     sf_conn = sf.connect(
         # user=user, # Snowflake user e.g. first_name.last_name@carejourney.com
-        user='michael.oconnor@carejourney.com',
+        user=usrID,
         # password=password, # carejourney-prod Okta password
-        password='myPassword',
+        password=pssWrd,
         account='carejourney_nci.us-east-1',
         authenticator='externalbrowser',
         warehouse='DEV_BRIGHT', # snowflake warehouse --optional
@@ -45,14 +53,36 @@ try:
     sql = ''
     tableWoutPK = []
 
-    # need access to data_model db in nci
+    # need access to data_model db in nci  ... datamodel sometimes gets ahead (out of synch) with orgDB
+    # if tableType == 'Not Network Not Layup': #? base 48
+    #     sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name NOT LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
+    # elif tableType == 'Network Not Layup': # 43
+    #     sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'    
+    # else:  # layup 24 includes network_layup
+    #     sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%LAYUP%\' order by table_name'
     if tableType == 'Not Network Not Layup': #? base 48
-        sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name NOT LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
+        # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name NOT LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
+        sql = '''SELECT table_name 
+                FROM {orgDB}.information_schema.TABLES 
+                WHERE table_schema LIKE 'VRDC%' AND TABLE_name NOT LIKE '%NETWORK%' 
+                AND table_name NOT LIKE '%LAYUP%' 
+                order by table_name'''.format(orgDB=orgDB)
     elif tableType == 'Network Not Layup': # 43
-        sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'    
+        # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
+        sql = '''SELECT table_name 
+                FROM {orgDB}.information_schema.TABLES 
+                WHERE table_schema LIKE 'VRDC%' AND TABLE_name LIKE \'%NETWORK%\' 
+                AND table_name NOT LIKE '%LAYUP%' 
+                order by table_name'''.format(orgDB=orgDB)
     else:  # layup 24 includes network_layup
-        sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%LAYUP%\' order by table_name'
- 
+        # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%LAYUP%\' order by table_name'
+        sql = '''SELECT table_name 
+                FROM {orgDB}.information_schema.TABLES 
+                WHERE table_schema LIKE 'VRDC%' 
+                AND TABLE_name LIKE '%LAYUP%' 
+                order by table_name'''.format(orgDB=orgDB)
+
+
     sf_cursor.execute(sql)
     df = sf_cursor.fetch_pandas_all()
     singleColTN=df.loc[:,'TABLE_NAME']
@@ -72,7 +102,7 @@ try:
         for idx in range(len(results)):
             table_results.append([results[idx][3], results[idx][4]])
 
-        print(tabulate(table_results, headers=["table_name", "pk_name"], tablefmt='psql'))
+        # print(tabulate(table_results, headers=["table_name", "pk_name"], tablefmt='psql'))
         df2 = pd.DataFrame(table_results, columns=["table_name", "pk_name"])
         singleColPK = df2.loc[:,"pk_name"]
         tblPKList = singleColPK.tolist()
@@ -82,7 +112,7 @@ try:
         if len(tblPKList) > 0:
             tableKeysStruct[tblList[i]] = tblPKList
         else:
-            print(tblList[i] + ' has no keys')
+            # print(tblList[i] + ' has no keys')
             tableWoutPK.append(tblList[i])
 
     pprint.pprint(tableKeysStruct)
@@ -92,7 +122,35 @@ try:
         # overwrites if exists
     # df3.to_excel('/Users/michael.oconnor/downloads/myTables3.xlsx',sheet_name=tableType)
 
-    print('tables w/out pks: ', tableWoutPK)
+    def dupCheckTest(tableDict):
+        for table, pks in tableDict.items():
+            print(table, ' ,'.join(tableDict[table]))
+
+
+    def test2(tableDict):
+        table_results = []
+        for table in tableDict.keys():
+            sqlString = '''SELECT '{table}' AS TableName
+                            , '{orgDB}' AS ordDBName
+                            , max(load_ts) AS MaxLoadTS
+                            , count(*) AS rwCount
+                        FROM {orgDB}.VRDC.{table}'''.format(table=table,orgDB=orgDB)
+            sf_cursor.execute(sqlString)
+            results = sf_cursor.fetchall()
+            # df3 = sf_cursor.fetch_pandas_all() # overwrites each time. need to append to a list like above
+            # print(df3)
+            # df4 += df3
+            table_results.append([results[0][0], results[0][1], results[0][2], results[0][3]])
+
+        df3 = pd.DataFrame(table_results, columns=["tableName", "orgDBName", "MaxLoadTS", "rwCount"])
+        print(df3)
+
+    
+    
+    test2(tableKeysStruct)
+    # dupCheckTest(tableKeysStruct)    
+
+    print('tables w/out pks and not included: ', tableWoutPK)
 
 except Exception as e:
     print(e)
