@@ -31,7 +31,7 @@ orgDB = ''
 
 tableType = pyip.inputMenu(['Not Network Not Layup','Network Not Layup','Layup'], lettered=False, numbered=True)
 
-orgDB = pyip.inputMenu(['PROD_BEAUMONT', 'PROD_BRIGHT', 'PROD_CHENMED', 'PROD_CLOVERNA', 'PROD_EVOLENT', 'PROD_OSCAR', 'PROD_PARADIGM', 'PROD_PRIVIA'], lettered=False, numbered=True)
+orgDB = pyip.inputMenu(['PROD_BEAUMONT', 'PROD_BRIGHT', 'PROD_CHENMED', 'PROD_CLOVERNA', 'PROD_EVOLENT', 'PROD_OAKSTREETNA', 'PROD_OSCAR', 'PROD_PARADIGM', 'PROD_PRIVIA'], lettered=False, numbered=True)
 
 
 
@@ -60,27 +60,36 @@ try:
     #     sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'    
     # else:  # layup 24 includes network_layup
     #     sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%LAYUP%\' order by table_name'
+    # intended on using data_model.information_schema but it can get out of synch with
+    # orgdb's information_schema... can get out of synch the other way too where org's db has a table that
+    # datamodel doesn't.. need to inner join
     if tableType == 'Not Network Not Layup': #? base 48
         # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name NOT LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
-        sql = '''SELECT table_name 
-                FROM {orgDB}.information_schema.TABLES 
-                WHERE table_schema LIKE 'VRDC%' AND TABLE_name NOT LIKE '%NETWORK%' 
-                AND table_name NOT LIKE '%LAYUP%' 
-                order by table_name'''.format(orgDB=orgDB)
+        sql = '''SELECT orgDBT.table_name 
+                FROM {orgDB}.information_schema.TABLES orgDBT
+                join data_model.information_schema.tables dbT
+                    on orgDBT.table_name = dbT.table_name
+                WHERE orgDBT.table_schema LIKE 'VRDC%' AND orgDBT.TABLE_name NOT LIKE '%NETWORK%' 
+                AND orgDBT.table_name NOT LIKE '%LAYUP%' 
+                order by orgDBT.table_name'''.format(orgDB=orgDB)
     elif tableType == 'Network Not Layup': # 43
         # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
-        sql = '''SELECT table_name 
-                FROM {orgDB}.information_schema.TABLES 
-                WHERE table_schema LIKE 'VRDC%' AND TABLE_name LIKE \'%NETWORK%\' 
-                AND table_name NOT LIKE '%LAYUP%' 
-                order by table_name'''.format(orgDB=orgDB)
+        sql = '''SELECT orgDBT.table_name 
+                FROM {orgDB}.information_schema.TABLES orgDBT
+                join data_model.information_schema.tables dbT
+                    on orgDBT.table_name = dbT.table_name                
+                WHERE orgDBT.table_schema LIKE 'VRDC%' AND orgDBT.TABLE_name LIKE '%NETWORK%' 
+                AND orgDBT.table_name NOT LIKE '%LAYUP%' 
+                order by orgDBT.table_name'''.format(orgDB=orgDB)
     else:  # layup 24 includes network_layup
         # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%LAYUP%\' order by table_name'
-        sql = '''SELECT table_name 
-                FROM {orgDB}.information_schema.TABLES 
-                WHERE table_schema LIKE 'VRDC%' 
-                AND TABLE_name LIKE '%LAYUP%' 
-                order by table_name'''.format(orgDB=orgDB)
+        sql = '''SELECT orgDBT.table_name 
+                FROM {orgDB}.information_schema.TABLES orgDBT
+                join data_model.information_schema.tables dbT
+                    on orgDBT.table_name = dbT.table_name                 
+                WHERE orgDBT.table_schema LIKE 'VRDC%' 
+                AND orgDBT.TABLE_name LIKE '%LAYUP%' 
+                order by orgDBT.table_name'''.format(orgDB=orgDB)
 
 
     sf_cursor.execute(sql)
@@ -115,7 +124,7 @@ try:
             # print(tblList[i] + ' has no keys')
             tableWoutPK.append(tblList[i])
 
-    pprint.pprint(tableKeysStruct)
+    # pprint.pprint(tableKeysStruct)
 
     # tableKeys = tableKeysStruct.keys()
     # df3 = pd.DataFrame(tableKeys, columns=["table_name"])
@@ -126,13 +135,14 @@ try:
         for table, pks in tableDict.items():
             print(table, ' ,'.join(tableDict[table]))
 
+    # need to cast load_ts to date here too
 
     def test2(tableDict):
         table_results = []
         for table in tableDict.keys():
             sqlString = '''SELECT '{table}' AS TableName
                             , '{orgDB}' AS ordDBName
-                            , max(load_ts) AS MaxLoadTS
+                            , max(date(load_ts)) AS MaxLoadTS
                             , count(*) AS rwCount
                         FROM {orgDB}.VRDC.{table}'''.format(table=table,orgDB=orgDB)
             sf_cursor.execute(sqlString)
@@ -143,14 +153,42 @@ try:
             table_results.append([results[0][0], results[0][1], results[0][2], results[0][3]])
 
         df3 = pd.DataFrame(table_results, columns=["tableName", "orgDBName", "MaxLoadTS", "rwCount"])
-        print(df3)
+        return df3
 
     
     
-    test2(tableKeysStruct)
+    df_prod = test2(tableKeysStruct)
     # dupCheckTest(tableKeysStruct)    
-
+    print(df_prod)
     print('tables w/out pks and not included: ', tableWoutPK)
+    orgDB_FE =  orgDB + '_FE'
+
+    # need to cast load_ts to date here
+
+    def test3(tableDict):
+        table_results = []
+        for table in tableDict.keys():
+            sqlString = '''SELECT '{table}' AS TableName
+                            , '{orgDB}' AS ordDBName
+                            , max(date(load_ts)) AS MaxLoadTS
+                            , count(*) AS rwCount
+                        FROM {orgDB}.VRDC.{table}'''.format(table=table,orgDB=orgDB_FE)
+            sf_cursor.execute(sqlString)
+            results = sf_cursor.fetchall()
+            # df3 = sf_cursor.fetch_pandas_all() # overwrites each time. need to append to a list like above
+            # print(df3)
+            # df4 += df3
+            table_results.append([results[0][0], results[0][1], results[0][2], results[0][3]])
+
+        df3 = pd.DataFrame(table_results, columns=["tableName", "orgDBName", "MaxLoadTS", "rwCount"])
+        # df3['MaxLoadTS'] = df3['MaxLoadTS'].dt.date   # hack  Can only use .dt accessor with datetimelike value
+        df4 = pd.merge(df_prod, df3, how='left', on='tableName')
+        return df4
+
+    df_prod_fe = test3(tableKeysStruct)
+    print(df_prod_fe)
+
+    df_prod_fe.to_excel('/Users/michael.oconnor/downloads/myTables4.xlsx',sheet_name='compareTest')
 
 except Exception as e:
     print(e)
