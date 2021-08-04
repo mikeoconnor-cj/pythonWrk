@@ -31,9 +31,12 @@ orgDB = ''
 
 tableType = pyip.inputMenu(['Not Network Not Layup','Network Not Layup','Layup'], lettered=False, numbered=True)
 
-orgDB = pyip.inputMenu(['PROD_BEAUMONT', 'PROD_BRIGHT', 'PROD_CHENMED', 'PROD_CLOVERNA', 'PROD_EVOLENT', 'PROD_OAKSTREETNA', 'PROD_OSCAR', 'PROD_PARADIGM', 'PROD_PRIVIA'], lettered=False, numbered=True)
+orgDB = pyip.inputMenu(['PROD_BEAUMONT', 'PROD_CHENMED', 'PROD_CLOVERNA', 'PROD_EVOLENT', 'PROD_OAKSTREETNA', 'PROD_PARADIGM', 'PROD_PRIVIA'], lettered=False, numbered=True)
 
-
+# 'PROD_BRIGHT', 'PROD_OSCAR', 
+# Bright and Oscar are old orgs...Oscar and Bright both have time stamp in June 2021.   Privia has July 2021.
+# I think PROFILE_LIST_OUTPATIENT_NETWORK_LAYUP is a known dup but idk about RNDRG_PROVIDER_SAVINGS_OPP_NETWORK_LAYUP
+# DC_PROVIDER_BENCHMARK_NETWORK_LAYUP many dups for Privia
 
 try:
     sf.paramstyle = 'qmark'
@@ -132,12 +135,43 @@ try:
     # df3.to_excel('/Users/michael.oconnor/downloads/myTables3.xlsx',sheet_name=tableType)
 
     def dupCheckTest(tableDict):
+        print('running dup check...')
+        table_results = []
         for table, pks in tableDict.items():
-            print(table, ' ,'.join(tableDict[table]))
+            # print(table, ', '.join(tableDict[table]))
+            # print(table, ', '.join(pks))
+            sqlString = '''WITH dupCTE
+                            AS
+                            (
+                            SELECT '{table}' AS tableName
+                                , sum(rowsDuped) AS rowsAffected
+                                , count(*) AS pkRowCount
+                            FROM
+                                (
+                                SELECT {compositeKeys}
+                                    , count(*) AS rowsDuped 
+                                FROM {orgDB}.VRDC.{table}
+                                GROUP BY {compositeKeys}
+                                HAVING count(*) > 1
+                                ) a 
+                            ) 
+                            SELECT tableName 
+                                , '{orgDB}' AS orgDBName
+                                , rowsAffected
+                                , pkRowCount
+                            FROM dupCTE'''.format(table=table,orgDB=orgDB,compositeKeys=', '.join(pks))                            
+            # print(sqlString)
+            sf_cursor.execute(sqlString)
+            results = sf_cursor.fetchall()
+            table_results.append([results[0][0], results[0][1], results[0][2], results[0][3]])
+
+        df5 = pd.DataFrame(table_results, columns=["tableName", "orgDBName", "rowsAffected", "pkRowCount"]) 
+        return df5   
 
     # need to cast load_ts to date here too
 
     def test2(tableDict):
+        print('running test2...')
         table_results = []
         for table in tableDict.keys():
             sqlString = '''SELECT '{table}' AS TableName
@@ -157,15 +191,14 @@ try:
 
     
     
-    df_prod = test2(tableKeysStruct)
-    # dupCheckTest(tableKeysStruct)    
-    print(df_prod)
-    print('tables w/out pks and not included: ', tableWoutPK)
+
     orgDB_FE =  orgDB + '_FE'
 
     # need to cast load_ts to date here
+    # does the call to test2 and the return to df_prod need to be here? 
 
     def test3(tableDict):
+        print('running test3....')
         table_results = []
         for table in tableDict.keys():
             sqlString = '''SELECT '{table}' AS TableName
@@ -185,10 +218,19 @@ try:
         df4 = pd.merge(df_prod, df3, how='left', on='tableName')
         return df4
 
-    df_prod_fe = test3(tableKeysStruct)
-    print(df_prod_fe)
 
-    df_prod_fe.to_excel('/Users/michael.oconnor/downloads/myTables4.xlsx',sheet_name='compareTest')
+    df_prod = test2(tableKeysStruct)
+    # dupCheckTest(tableKeysStruct)    
+    # print(df_prod)
+    print('tables w/out pks and not included: ', tableWoutPK)        
+
+    df_prod_fe = test3(tableKeysStruct)
+    # print(df_prod_fe)
+    df_prod_fe.to_excel('/Users/michael.oconnor/downloads/compareTest{orgDB}.xlsx'.format(orgDB=orgDB),sheet_name='compareTest')
+
+    dfDups = dupCheckTest(tableKeysStruct)
+    # print(dfDups)
+    dfDups.to_excel('/Users/michael.oconnor/downloads/dupTest{orgDB}.xlsx'.format(orgDB=orgDB),sheet_name='dupTest')
 
 except Exception as e:
     print(e)
