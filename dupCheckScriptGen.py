@@ -31,7 +31,7 @@ orgDB = ''
 
 tableType = pyip.inputMenu(['Not Network Not Layup','Network Not Layup','Layup'], lettered=False, numbered=True)
 
-orgDB = pyip.inputMenu(['PROD_BEAUMONT', 'PROD_CHENMED', 'PROD_CLOVERNA', 'PROD_EVOLENT', 'PROD_OAKSTREETNA', 'PROD_PARADIGM', 'PROD_PRIVIA'], lettered=False, numbered=True)
+orgDB = pyip.inputMenu(['PROD_BEAUMONT', 'PROD_CHENMED', 'PROD_CLOVERNA', 'PROD_EVOLENT', 'PROD_OAKSTREETNA', 'PROD_PARADIGM', 'PROD_PRIVIA', 'PROD_VILLAGEMDNA'], lettered=False, numbered=True)
 
 # 'PROD_BRIGHT', 'PROD_OSCAR', 
 # Bright and Oscar are old orgs...Oscar and Bright both have time stamp in June 2021.   Privia has July 2021.
@@ -102,6 +102,8 @@ try:
     # a list of all tables in the schema, there's 115 in vrdc in total
     tblList = singleColTN.tolist()
 
+    # tblList = ['PROFILE_LIST_RNDRG_PG','PROFILE_LIST_RNDRG_PG_NETWORK']
+
     # test with the first 15 tables
     for i in range(len(tblList)):
         # need access to data_model.vrdc schema
@@ -171,12 +173,13 @@ try:
     # need to cast load_ts to date here too
 
     def test2(tableDict):
-        print('running test2...')
+        print('running test2. prod row counts..')
         table_results = []
         for table in tableDict.keys():
             sqlString = '''SELECT '{table}' AS TableName
                             , '{orgDB}' AS ordDBName
                             , max(date(load_ts)) AS MaxLoadTS
+                            , max(load_period) AS MaxLP
                             , count(*) AS rwCount
                         FROM {orgDB}.VRDC.{table}'''.format(table=table,orgDB=orgDB)
             sf_cursor.execute(sqlString)
@@ -184,9 +187,9 @@ try:
             # df3 = sf_cursor.fetch_pandas_all() # overwrites each time. need to append to a list like above
             # print(df3)
             # df4 += df3
-            table_results.append([results[0][0], results[0][1], results[0][2], results[0][3]])
+            table_results.append([results[0][0], results[0][1], results[0][2], results[0][3], results[0][4]])
 
-        df3 = pd.DataFrame(table_results, columns=["tableName", "orgDBName", "MaxLoadTS", "rwCount"])
+        df3 = pd.DataFrame(table_results, columns=["tableName", "orgDBName", "MaxLoadTS", "MaxLP", "rwCount"])
         return df3
 
     
@@ -198,12 +201,13 @@ try:
     # does the call to test2 and the return to df_prod need to be here? 
 
     def test3(tableDict):
-        print('running test3....')
+        print('running test3..prod_fe row counts..')
         table_results = []
         for table in tableDict.keys():
             sqlString = '''SELECT '{table}' AS TableName
                             , '{orgDB}' AS ordDBName
                             , max(date(load_ts)) AS MaxLoadTS
+                            , max(load_period) AS MaxLP                            
                             , count(*) AS rwCount
                         FROM {orgDB}.VRDC.{table}'''.format(table=table,orgDB=orgDB_FE)
             sf_cursor.execute(sqlString)
@@ -211,26 +215,118 @@ try:
             # df3 = sf_cursor.fetch_pandas_all() # overwrites each time. need to append to a list like above
             # print(df3)
             # df4 += df3
-            table_results.append([results[0][0], results[0][1], results[0][2], results[0][3]])
+            table_results.append([results[0][0], results[0][1], results[0][2], results[0][3], results[0][4]])
 
-        df3 = pd.DataFrame(table_results, columns=["tableName", "orgDBName", "MaxLoadTS", "rwCount"])
+        df3 = pd.DataFrame(table_results, columns=["tableName", "orgDBName", "MaxLoadTS", "MaxLP", "rwCount"])
         # df3['MaxLoadTS'] = df3['MaxLoadTS'].dt.date   # hack  Can only use .dt accessor with datetimelike value
         df4 = pd.merge(df_prod, df3, how='left', on='tableName')
+        df4['diff'] = df4['rwCount_x'] - df4['rwCount_y'] # does this work?  
         return df4
 
+    def test4(tableDict):
+        print('running test 4... utilization in Prod')
+        for table in tableDict.keys():
+            if table == 'PROFILE_LIST_RNDRG_PG' or table == 'PROFILE_LIST_RNDRG_PG_NETWORK':
+                sqlString = '''with pac_count as (
+                                    select 
+                                        YEAR
+                                        , 'PAC Count' as label
+                                        , count(distinct PAC_NUM) as METRIC_TOTAL
+                                        from {orgDB}.VRDC.{table}
+                                        group by 1
+                                    )
+                                    , metrics as (
+                                    select 
+                                        YEAR
+                                        , METRIC_LABEL as LABEL
+                                        , SUM(METRIC) as METRIC_TOTAL
+                                        from {orgDB}.VRDC.{table}
+                                        where METRIC_LABEL in ('Total Allowed - Inpatient Hospital',
+                                                        'Total Allowed - Outpatient Hospital',
+                                                        'Total Allowed - Office',
+                                                        'Total Allowed - Hospice',
+                                                        'Total Allowed - Home', 
+                                                        'Total Allowed - Pharmacy', 
+                                                        'Avoidable ED - total payments')
+                                        group by 1, 2
+                                    )
+                                    select '{table}' as tableName, year, label, '{orgDB}' as orgDB, metric_total from pac_count
+                                    union all
+                                    select '{table}' as tableName, year, label, '{orgDB}' as orgDB, metric_total from metrics
+                                    order by 1, 2, 3
+                                    ;'''.format(table=table,orgDB=orgDB)
 
-    df_prod = test2(tableKeysStruct)
+                sf_cursor.execute(sqlString)
+                # how do you append outputs/stack them for pg and pg_network if both can have several rows?   
+                df = sf_cursor.fetch_pandas_all()
+                # df += df.append(df)
+        return df
+
+    def test5(tableDict):
+        print('running test 5... utilization in FE')
+        for table in tableDict.keys():
+            if table == 'PROFILE_LIST_RNDRG_PG' or table == 'PROFILE_LIST_RNDRG_PG_NETWORK':
+                sqlString = '''with pac_count as (
+                                    select 
+                                        YEAR
+                                        , 'PAC Count' as label
+                                        , count(distinct PAC_NUM) as METRIC_TOTAL
+                                        from {orgDB_FE}.VRDC.{table}
+                                        group by 1
+                                    )
+                                    , metrics as (
+                                    select 
+                                        YEAR
+                                        , METRIC_LABEL as LABEL
+                                        , SUM(METRIC) as METRIC_TOTAL
+                                        from {orgDB_FE}.VRDC.{table}
+                                        where METRIC_LABEL in ('Total Allowed - Inpatient Hospital',
+                                                        'Total Allowed - Outpatient Hospital',
+                                                        'Total Allowed - Office',
+                                                        'Total Allowed - Hospice',
+                                                        'Total Allowed - Home', 
+                                                        'Total Allowed - Pharmacy', 
+                                                        'Avoidable ED - total payments')
+                                        group by 1, 2
+                                    )
+                                    select '{table}' as tableName, year, label, '{orgDB_FE}' as orgDB, metric_total from pac_count
+                                    union all
+                                    select '{table}' as tableName, year, label, '{orgDB_FE}' as orgDB, metric_total from metrics
+                                    order by 1, 2, 3
+                                    ;'''.format(table=table,orgDB_FE=orgDB_FE)
+
+                sf_cursor.execute(sqlString)
+                # how do you append outputs for pg and pg_network if both can have several rows?   
+                df = sf_cursor.fetch_pandas_all()
+                # print(df)
+                # print(dfPG)
+                df5 = pd.merge(dfPG, df, how='left', on=['TABLENAME','YEAR','LABEL'])
+                #['tableName','year','label']
+                # print(df5)
+        return df5
+
+    df_prod = test2(tableKeysStruct)  # has to be called
     # dupCheckTest(tableKeysStruct)    
     # print(df_prod)
     print('tables w/out pks and not included: ', tableWoutPK)        
 
     df_prod_fe = test3(tableKeysStruct)
     # print(df_prod_fe)
-    df_prod_fe.to_excel('/Users/michael.oconnor/downloads/compareTest{orgDB}.xlsx'.format(orgDB=orgDB),sheet_name='compareTest')
+    df_prod_fe.to_excel('/Users/michael.oconnor/downloads/compareTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(),tableType = tableType.lower()),sheet_name='compareTest')
 
     dfDups = dupCheckTest(tableKeysStruct)
     # print(dfDups)
-    dfDups.to_excel('/Users/michael.oconnor/downloads/dupTest{orgDB}.xlsx'.format(orgDB=orgDB),sheet_name='dupTest')
+    dfDups.to_excel('/Users/michael.oconnor/downloads/dupTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='dupTest')
+
+    if tableType == 'Not Network Not Layup' or tableType == 'Network Not Layup' :
+        dfPG = test4(tableKeysStruct)
+        # print(dfPG)
+        dfPGMerge = test5(tableKeysStruct)
+        # print(dfPGMerge)
+        dfPGMerge.to_excel('/Users/michael.oconnor/downloads/metricsTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='metrics')
+
+
+
 
 except Exception as e:
     print(e)
