@@ -16,8 +16,11 @@ from tabulate import tabulate
 import pprint
 import pyinputplus as pyip
 from openpyxl import load_workbook
+import time
 
 tableKeysStruct = {}
+
+strtTime = time.time()
 
 wb = load_workbook('/Users/michael.oconnor/sfIDFile.xlsx')
 ws = wb.active
@@ -308,24 +311,38 @@ try:
     df_prod = test2(tableKeysStruct)  # has to be called
     # dupCheckTest(tableKeysStruct)    
     # print(df_prod)
-    print('tables w/out pks and not included: ', tableWoutPK)        
+    print('tables w/out pks and not included: ', tableWoutPK)
+
+    all_test_results = {}
+    output_file_path = '/Users/michael.oconnor/downloads/allTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(),tableType = tableType.lower())        
+
+    writer = pd.ExcelWriter(output_file_path, engine='xlsxwriter')
 
     df_prod_fe = test3(tableKeysStruct)
     # print(df_prod_fe)
-    df_prod_fe.to_excel('/Users/michael.oconnor/downloads/compareTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(),tableType = tableType.lower()),sheet_name='compareTest')
+    # df_prod_fe.to_excel('/Users/michael.oconnor/downloads/compareTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(),tableType = tableType.lower()),sheet_name='compareTest')
+    all_test_results['compareTest'] = df_prod_fe
 
     dfDups = dupCheckTest(tableKeysStruct)
     # print(dfDups)
-    dfDups.to_excel('/Users/michael.oconnor/downloads/dupTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='dupTest')
+    # dfDups.to_excel('/Users/michael.oconnor/downloads/dupTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='dupTest')
+    all_test_results['dupTest'] = dfDups
 
     if tableType == 'Not Network Not Layup' or tableType == 'Network Not Layup' :
         dfPG = test4(tableKeysStruct)
         # print(dfPG)
         dfPGMerge = test5(tableKeysStruct)
         # print(dfPGMerge)
-        dfPGMerge.to_excel('/Users/michael.oconnor/downloads/metricsTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='metrics')
+        # dfPGMerge.to_excel('/Users/michael.oconnor/downloads/metricsTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='metrics')
+        all_test_results['metrics'] = dfPGMerge
 
+    for sheet_name, df in all_test_results.items():
+        df.to_excel(writer, sheet_name=sheet_name)
+    writer.save()
 
+    endTime = time.time()
+    print('Time in seconds: %s' % (endTime - strtTime))
+    print('Time in minutes: %s' % str(round((endTime - strtTime) / 60,2)))
 
 
 except Exception as e:
