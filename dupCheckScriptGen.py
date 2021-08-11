@@ -32,7 +32,8 @@ wb.close()
 tableType = ''
 orgDB = ''
 
-tableType = pyip.inputMenu(['Not Network Not Layup','Network Not Layup','Layup'], lettered=False, numbered=True)
+# tableType = pyip.inputMenu(['Not Network Not Layup','Network Not Layup','Layup'], lettered=False, numbered=True)
+tableType = pyip.inputMenu(['Base','Network','Layup'], lettered=False, numbered=True)
 
 orgDB = pyip.inputMenu(['PROD_BEAUMONT', 'PROD_CHENMED', 'PROD_CLOVERNA', 'PROD_EVOLENT', 'PROD_OAKSTREETNA', 'PROD_PARADIGM', 'PROD_PRIVIA', 'PROD_VILLAGEMDNA'], lettered=False, numbered=True)
 
@@ -69,7 +70,7 @@ try:
     # intended on using data_model.information_schema but it can get out of synch with
     # orgdb's information_schema... can get out of synch the other way too where org's db has a table that
     # datamodel doesn't.. need to inner join
-    if tableType == 'Not Network Not Layup': #? base 48
+    if tableType == 'Base': #? base 48
         # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name NOT LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
         sql = '''SELECT orgDBT.table_name 
                 FROM {orgDB}.information_schema.TABLES orgDBT
@@ -78,7 +79,7 @@ try:
                 WHERE orgDBT.table_schema LIKE 'VRDC%' AND orgDBT.TABLE_name NOT LIKE '%NETWORK%' 
                 AND orgDBT.table_name NOT LIKE '%LAYUP%' 
                 order by orgDBT.table_name'''.format(orgDB=orgDB)
-    elif tableType == 'Network Not Layup': # 43
+    elif tableType == 'Network': # 43
         # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
         sql = '''SELECT orgDBT.table_name 
                 FROM {orgDB}.information_schema.TABLES orgDBT
@@ -304,9 +305,100 @@ try:
                 # print(df)
                 # print(dfPG)
                 df5 = pd.merge(dfPG, df, how='left', on=['TABLENAME','YEAR','LABEL'])
+                df5['diff'] = df5['METRIC_TOTAL_x'] - df5['METRIC_TOTAL_y'] 
                 #['tableName','year','label']
                 # print(df5)
         return df5
+
+    def test6(tableDict):
+        print('running test 6..cji utilization in PROD..')
+        for table in tableDict.keys():
+            if table == 'CJI_COST_SCORECARD' or table == 'CJI_COST_SCORECARD_NETWORK':
+                sqlString = '''with npi_count as (
+                                       select 
+                                          YEAR
+                                        , 'NPI Count' as label
+                                        , count(distinct NPI) as metric_total
+                                        from {orgDB}.VRDC.{table}
+                                        group by 1
+                                    )
+                                , pac_count as (
+                                       select 
+                                          YEAR
+                                        , 'PAC Count' as label
+                                        , count(distinct PAC_NUM) as metric_total
+                                        from {orgDB}.VRDC.{table}
+                                        group by 1
+                                    )
+                                , episode_count as (
+                                       select 
+                                          YEAR
+                                        , 'Total Episode Count' as label
+                                        , sum(NUM_EPISODES) as metric_total
+                                        from {orgDB}.VRDC.{table}
+                                        group by 1
+                                    )
+                                    select '{table}' as tableName, year, label, '{orgDB}' as orgDB, metric_total from npi_count
+                                    union all 
+                                    select '{table}' as tableName, year, label, '{orgDB}' as orgDB, metric_total from pac_count
+                                    union all
+                                    select '{table}' as tableName, year, label, '{orgDB}' as orgDB, metric_total from episode_count
+                                    order by 1, 2, 3
+                                    ;'''.format(table=table,orgDB=orgDB)
+
+                sf_cursor.execute(sqlString)
+                # how do you append outputs/stack them for pg and pg_network if both can have several rows?   
+                df = sf_cursor.fetch_pandas_all()
+                # df += df.append(df)
+        return df
+
+    # CJI_COST_SCORECARD (prod_fe)
+    
+    def test7(tableDict):
+        print('running test 7..cji utilization in FE..')
+        for table in tableDict.keys():
+            if table == 'CJI_COST_SCORECARD' or table == 'CJI_COST_SCORECARD_NETWORK':
+                sqlString = '''with npi_count as (
+                                       select 
+                                          YEAR
+                                        , 'NPI Count' as label
+                                        , count(distinct NPI) as metric_total
+                                        from {orgDB_FE}.VRDC.{table}
+                                        group by 1
+                                    )
+                                , pac_count as (
+                                       select 
+                                          YEAR
+                                        , 'PAC Count' as label
+                                        , count(distinct PAC_NUM) as metric_total
+                                        from {orgDB_FE}.VRDC.{table}
+                                        group by 1
+                                    )
+                                , episode_count as (
+                                       select 
+                                          YEAR
+                                        , 'Total Episode Count' as label
+                                        , sum(NUM_EPISODES) as metric_total
+                                        from {orgDB_FE}.VRDC.{table}
+                                        group by 1
+                                    )
+                                    select '{table}' as tableName, year, label, '{orgDB_FE}' as orgDB, metric_total from npi_count
+                                    union all 
+                                    select '{table}' as tableName, year, label, '{orgDB_FE}' as orgDB, metric_total from pac_count
+                                    union all
+                                    select '{table}' as tableName, year, label, '{orgDB_FE}' as orgDB, metric_total from episode_count
+                                    order by 1, 2, 3
+                                    ;'''.format(table=table,orgDB_FE=orgDB_FE)
+
+                sf_cursor.execute(sqlString)
+                # how do you append outputs for pg and pg_network if both can have several rows?   
+                df = sf_cursor.fetch_pandas_all()
+                # print(df)
+                # print(dfPG)
+                df7 = pd.merge(dfCJI, df, how='left', on=['TABLENAME','YEAR','LABEL'])
+                df7['diff'] = df7['METRIC_TOTAL_x'] - df7['METRIC_TOTAL_y'] # does this work? 
+        return df7    
+
 
     df_prod = test2(tableKeysStruct)  # has to be called
     # dupCheckTest(tableKeysStruct)    
@@ -328,13 +420,22 @@ try:
     # dfDups.to_excel('/Users/michael.oconnor/downloads/dupTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='dupTest')
     all_test_results['dupTest'] = dfDups
 
-    if tableType == 'Not Network Not Layup' or tableType == 'Network Not Layup' :
+    if tableType == 'Base' or tableType == 'Network' :
         dfPG = test4(tableKeysStruct)
         # print(dfPG)
         dfPGMerge = test5(tableKeysStruct)
         # print(dfPGMerge)
         # dfPGMerge.to_excel('/Users/michael.oconnor/downloads/metricsTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='metrics')
-        all_test_results['metrics'] = dfPGMerge
+        all_test_results['metrics_1'] = dfPGMerge
+
+    if tableType == 'Base' or tableType == 'Network' :
+        dfCJI = test6(tableKeysStruct)
+        # print(dfPG)
+        dfCJIMerge = test7(tableKeysStruct)
+        # print(dfPGMerge)
+        # dfPGMerge.to_excel('/Users/michael.oconnor/downloads/metricsTest_{orgDB}_{tableType}.xlsx'.format(orgDB=orgDB.lower(), tableType=tableType.lower()),sheet_name='metrics')
+        all_test_results['metrics_2'] = dfCJIMerge
+    
 
     for sheet_name, df in all_test_results.items():
         df.to_excel(writer, sheet_name=sheet_name)
