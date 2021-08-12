@@ -250,8 +250,8 @@ try:
                                                         'Total Allowed - Office',
                                                         'Total Allowed - Hospice',
                                                         'Total Allowed - Home', 
-                                                        'Total Allowed - Pharmacy', 
-                                                        'Avoidable ED - total payments')
+                                                        'Total Allowed - Pharmacy'
+                                                        )
                                         group by 1, 2
                                     )
                                     select '{table}' as tableName, year, label, '{orgDB}' as orgDB, metric_total from pac_count
@@ -289,8 +289,8 @@ try:
                                                         'Total Allowed - Office',
                                                         'Total Allowed - Hospice',
                                                         'Total Allowed - Home', 
-                                                        'Total Allowed - Pharmacy', 
-                                                        'Avoidable ED - total payments')
+                                                        'Total Allowed - Pharmacy'
+                                                        )
                                         group by 1, 2
                                     )
                                     select '{table}' as tableName, year, label, '{orgDB_FE}' as orgDB, metric_total from pac_count
