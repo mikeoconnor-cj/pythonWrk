@@ -81,12 +81,14 @@ try:
                 order by orgDBT.table_name'''.format(orgDB=orgDB)
     elif tableType == 'Network': # 43
         # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%NETWORK%\' AND table_name NOT LIKE \'%LAYUP%\' order by table_name'
+        # FE doesn't have PPI_NETWORK TABLES yet
         sql = '''SELECT orgDBT.table_name 
                 FROM {orgDB}.information_schema.TABLES orgDBT
                 join data_model.information_schema.tables dbT
                     on orgDBT.table_name = dbT.table_name                
                 WHERE orgDBT.table_schema LIKE 'VRDC%' AND orgDBT.TABLE_name LIKE '%NETWORK%' 
                 AND orgDBT.table_name NOT LIKE '%LAYUP%' 
+                AND orgDBT.TABLE_name NOT LIKE 'PPI_%' 
                 order by orgDBT.table_name'''.format(orgDB=orgDB)
     else:  # layup 24 includes network_layup
         # sql = 'SELECT table_name FROM data_model.information_schema.TABLES WHERE table_schema LIKE \'VRDC%\' AND TABLE_name LIKE \'%LAYUP%\' order by table_name'
