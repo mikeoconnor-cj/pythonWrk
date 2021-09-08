@@ -6,9 +6,9 @@ SELECT SPLIT_PART(PK_ACTIVITY_ID,'|', 3) AS clm_id
 	, SPLIT_PART(PK_ACTIVITY_ID,'|', 4) AS line_num
 	, FK_PATIENT_ID AS bene_key ---for Change, there's a hash for a2024, there's an org_src_id prefix
 	, CASE 
-		WHEN regexp_like(PROCEDURE_HCPCS_MOD_CD_LIST[0],'E[1-4]|FA|F[1-9]|L[CDT]|R[CT]|TA|T[1-9]') THEN trim(PROCEDURE_HCPCS_MOD_CD_LIST[0])
-		WHEN regexp_like(PROCEDURE_HCPCS_MOD_CD_LIST[1],'E[1-4]|FA|F[1-9]|L[CDT]|R[CT]|TA|T[1-9]') THEN trim(PROCEDURE_HCPCS_MOD_CD_LIST[1])
-		WHEN regexp_like(PROCEDURE_HCPCS_MOD_CD_LIST[2],'E[1-4]|FA|F[1-9]|L[CDT]|R[CT]|TA|T[1-9]') THEN trim(PROCEDURE_HCPCS_MOD_CD_LIST[2])
+		WHEN regexp_like(PROCEDURE_HCPCS_MOD_CD_LIST[0],'E[1-4]|FA|F[1-9]|L[CDT]|R[CT]|TA|T[1-9]|50') THEN trim(PROCEDURE_HCPCS_MOD_CD_LIST[0])
+		WHEN regexp_like(PROCEDURE_HCPCS_MOD_CD_LIST[1],'E[1-4]|FA|F[1-9]|L[CDT]|R[CT]|TA|T[1-9]|50') THEN trim(PROCEDURE_HCPCS_MOD_CD_LIST[1])
+		WHEN regexp_like(PROCEDURE_HCPCS_MOD_CD_LIST[2],'E[1-4]|FA|F[1-9]|L[CDT]|R[CT]|TA|T[1-9]|50') THEN trim(PROCEDURE_HCPCS_MOD_CD_LIST[2])
 	  END AS body_mod
 	, trim(PROCEDURE_HCPCS_MOD_CD_LIST[0]) AS mod_1
 	, trim(PROCEDURE_HCPCS_MOD_CD_LIST[1]) AS mod_2
@@ -24,7 +24,10 @@ SELECT SPLIT_PART(PK_ACTIVITY_ID,'|', 3) AS clm_id
 		ELSE SPLIT_PART(fk_provider_primary_id,'|',2)
 	  END AS providers
 	, FACILITY_REVENUE_CENTER_CD AS rev_cd
-
+	, '' AS rfr_pt_physn_npi
+	, CASE 
+		WHEN claim_type_cd NOT IN ('70','71') THEN SPLIT_PART(PK_ACTIVITY_ID,'|', 4)
+	  END AS sgmt_num	
 	, CASE 
 		WHEN claim_type_cd = '40' THEN 'op'
 		WHEN claim_type_cd IN ('70','71') THEN 'pb'
@@ -60,20 +63,21 @@ SELECT SPLIT_PART(PK_ACTIVITY_ID,'|', 3) AS clm_id
   	, PK_ACTIVITY_ID 
 FROM insights.ACTIVITY 
 WHERE 
-ACTIVITY_TYPE_CD <> 'med'
+ACTIVITY_TYPE_CD NOT in ('med', 'dme') -- is this filtering correct? 
 )  
 SELECT *  FROM body_mod_data 
-WHERE claim_type_cd = '40'
-fk_diagnosis_id_list[0] <> '#NA'
+WHERE 
+--claim_type_cd = '40'
+--fk_diagnosis_id_list[0] <> '#NA'
 body_mod IS NOT NULL
 
 
--- do we need 
+-- include one 
 -- CPT modifiers
 -- The two code sets are so similar, in fact, that you can regularly use modifiers from one codeset to the other. The HCPCS modifier –LT, for example, is regularly used in CPT codes when you need to describe a bilateral procedure that was only performed on one side of the body.
 -- HCPCS modifiers, like CPT modifiers, are always two characters, and are added to the end of a HCPCS or CPT code with a hyphen. When differentiating between a CPT modifier and a HCPCS modifier, all there’s one simple rule: if the modifier has a letter in it, it’s a HCPCS modifier. If that modifier is entirely numeric, it’s a CPT modifier.
 
-
+-- 50 – Bilateral procedure
 
 
 --HCPCS modifiers
