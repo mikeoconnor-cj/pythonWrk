@@ -12,7 +12,13 @@ SELECT SPLIT_PART(PK_ACTIVITY_ID,'|', 3) AS clm_id
 	  END AS body_mod
 	, trim(PROCEDURE_HCPCS_MOD_CD_LIST[0]) AS mod_1
 	, trim(PROCEDURE_HCPCS_MOD_CD_LIST[1]) AS mod_2
-	, claim_line_allowed_amt AS pay
+	--, claim_line_allowed_amt AS pay
+	, CASE
+		WHEN activity_type_cd = 'phys' THEN claim_line_allowed_amt
+		WHEN activity_type_cd in ('fac_rev', 'dme') THEN CLAIM_LINE_PAID_AMT 
+		WHEN activity_type_cd = 'med' THEN claim_line_bene_paid_amt
+		ELSE 0
+	  END AS pay
 	, FACILITY_PLACE_OF_SERVICE_CD AS pos_cd
 	, FACILITY_NPI_NUM AS prf_at_grp_npi
 	, SPLIT_PART(fk_provider_primary_id,'|',2) AS prf_op_physn_npi  --etls show primary ID is best as it already considers claim type
