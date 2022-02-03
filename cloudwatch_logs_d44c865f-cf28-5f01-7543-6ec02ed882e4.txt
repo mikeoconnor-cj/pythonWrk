@@ -1,0 +1,170 @@
+Latest Log Timestamp: 2022-02-01T20:56:54.7837898Z
+c3ce059d-ba64-5107-87b3-5fee1a37f71a 2022-02-01T20:55:02.7173808Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+125ddb76-6687-53cd-b8d8-8105c6d4a35e 2022-02-01T20:55:02.7572431Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+e0c3a125-1649-5139-806c-fb56b61aa9cc 2022-02-01T20:55:02.9030199Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+c3ce059d-ba64-5107-87b3-5fee1a37f71a 2022-02-01T20:55:02.9375077Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+5c4cf12a-28e9-5911-9e2d-ab5988baf98c 2022-02-01T20:55:02.9787023Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+125ddb76-6687-53cd-b8d8-8105c6d4a35e 2022-02-01T20:55:03.0032193Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+1ced1a1b-514b-5e95-a2fd-4068f118dba9 2022-02-01T20:55:03.0940577Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+e0c3a125-1649-5139-806c-fb56b61aa9cc 2022-02-01T20:55:03.1443286Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+5c4cf12a-28e9-5911-9e2d-ab5988baf98c 2022-02-01T20:55:03.2255310Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+1ced1a1b-514b-5e95-a2fd-4068f118dba9 2022-02-01T20:55:03.2936592Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+691aff3d-6fe2-511f-9d23-a54ecf865423 2022-02-01T20:55:04.1150031Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+691aff3d-6fe2-511f-9d23-a54ecf865423 2022-02-01T20:55:04.3309011Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+0f764419-830b-5e74-80af-1e6a236f0b48 2022-02-01T20:55:04.5955484Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+0f764419-830b-5e74-80af-1e6a236f0b48 2022-02-01T20:55:04.8203488Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+1f6ceeb5-ea66-517d-aa7f-b4c64a00a988 2022-02-01T20:55:05.2232339Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+1f6ceeb5-ea66-517d-aa7f-b4c64a00a988 2022-02-01T20:55:05.4647502Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+3c8bd6fe-8bbb-506d-b1b0-8c8d2bde5898 2022-02-01T20:55:05.6498615Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+3c8bd6fe-8bbb-506d-b1b0-8c8d2bde5898 2022-02-01T20:55:05.8324611Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+6dabd758-196b-5e86-be42-8d2bb9032e1b 2022-02-01T20:55:08.0215063Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+6dabd758-196b-5e86-be42-8d2bb9032e1b 2022-02-01T20:55:08.2363189Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+1c38ac82-3ca1-5d96-bfcf-f6f19cc83b8b 2022-02-01T20:55:09.2154506Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+1c38ac82-3ca1-5d96-bfcf-f6f19cc83b8b 2022-02-01T20:55:09.4372035Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+3a3d583b-9a19-5791-8cab-02483a712702 2022-02-01T20:55:09.6849851Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+3a3d583b-9a19-5791-8cab-02483a712702 2022-02-01T20:55:09.9195383Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+43c5b5d8-3383-57fa-947e-efab93e97767 2022-02-01T20:55:10.4188037Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
+43c5b5d8-3383-57fa-947e-efab93e97767 2022-02-01T20:55:10.6656973Z [Warning] "Row dropped due to an exception converting to correct type: ODS.CCLF_3_PT_A_PROC_CD"
+"Value in ODS.CCLF_3_PT_A_PROC_CD.SRC_CUR_CLM_UNIQ_ID of type INTEGER cannot be parsed as an int"
+"   at Allos.ForeignDb.DatabaseProperties.SnowflakeDataTypeMapping.CastToCorrectType(String value, String dataType, String schema, String table, String column) in /github/workspace/build/output/backend_deployment/Allos.ForeignDb/DatabaseProperties/SnowflakeDataTypes.cs:line 257
+   at Allos.Lambda.Function.<>c__DisplayClass22_0.<ProcessTableFile>b__2(KeyValuePair`2 kvp) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 339
+   at System.Linq.Enumerable.ToDictionary[TSource,TKey,TElement](IEnumerable`1 source, Func`2 keySelector, Func`2 elementSelector, IEqualityComparer`1 comparer)
+   at Allos.Lambda.Function.ProcessTableFile(SQSMessage sqsMessage, String logFilePath, ILambdaContext lambdaContext) in /github/workspace/build/output/backend_deployment/Allos.Lambda/Function.cs:line 328"
