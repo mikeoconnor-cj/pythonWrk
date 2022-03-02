@@ -29,3 +29,57 @@ WITH dupCTE
         , pkRowCount
     FROM dupCTE           
     
+
+--error log
+--A2575_m-2022-01_2022-02-25T20:52:03.220458_40980  load_stage_table -> cclf_7_v26        | failed 
+--A2575_m-2022-01_2022-02-25T20:52:05.533755_40981  load_stage_table -> cclf_7_v26        | failed
+
+SELECT date(load_ts) AS load_date
+  , SSF_FILE_ID
+  , count(*) AS rwCnt
+FROM prod_a2575.STG.SSF_CCLF_7_V26 
+WHERE date(load_ts) > '2022-02-01'
+GROUP BY date(load_ts), SSF_FILE_ID
+ORDER BY date(load_ts) DESC
+
+LOAD_DATE SSF_FILE_ID RWCNT
+2022-02-24  40,980    120,082
+2022-02-24  40,981    816,649
+
+
+
+--error log
+--A2841_m-2022-01_2022-02-28T18:17:37.473197_41089_0 load_ods_table -> cclf_7_v26          | failed
+--A2841_m-2022-01_2022-02-28T18:42:43.825841_41090  load_stage_table -> cclf_7_v26        | success 
+--A2841_m-2022-01_2022-02-28T18:42:43.825841_41090_0 load_ods_table -> cclf_7_v26          | failed 
+
+SELECT date(load_ts) AS load_date
+  , SSF_FILE_ID
+  , count(*) AS rwCnt
+FROM prod_a2841.STG.SSF_CCLF_7_V26 
+WHERE date(load_ts) > '2022-02-01'
+GROUP BY date(load_ts), SSF_FILE_ID
+ORDER BY date(load_ts) DESC
+
+LOAD_DATE SSF_FILE_ID RWCNT
+2022-02-28  41,089    725,830
+2022-02-28  41,090    34,837
+2022-02-24  40,917    34,837
+2022-02-24  40,918    725,830
+
+
+
+--error log
+--A3327_m-2022-01_2022-02-25T18:12:00.621451_40859  load_stage_table -> cclf_5_v27 
+
+SELECT date(load_ts) AS load_date
+  , SSF_FILE_ID
+  , count(*) AS rwCnt
+FROM prod_a3327.STG.SSF_CCLF_5_V27 
+WHERE date(load_ts) > '2022-02-01'
+GROUP BY date(load_ts), SSF_FILE_ID
+ORDER BY date(load_ts) DESC
+
+LOAD_DATE SSF_FILE_ID RWCNT
+2022-02-25  40,860    5,135,179
+2022-02-17  40,859    330,184
