@@ -116,3 +116,11 @@ where measure_cd = 'total_member_years_current_month'
 order by ORG_GROUP_ID 
     ,  period_id       
  
+
+SELECT * 
+FROM PROD_ADAUGEOPI.ods.DCE_ALIGN ----not there
+WHERE load_set_id IN (45597,45598,40390,40417)
+
+SELECT * 
+FROM PROD_ILUMEDPI.ods.DCE_ALIGN --not there
+WHERE load_set_id IN (40410, 45615)
