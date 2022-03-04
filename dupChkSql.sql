@@ -83,3 +83,36 @@ ORDER BY date(load_ts) DESC
 LOAD_DATE SSF_FILE_ID RWCNT
 2022-02-25  40,860    5,135,179
 2022-02-17  40,859    330,184
+
+--the usual member month report... only shows 2022 data for Adaugeo and ilumed
+USE DATABASE prod_adaugeopi;    
+USE DATABASE prod_ilumedpi;
+
+Select org_id   
+    , period_id 
+    , measure_value_decimal AS totlForGroup 
+from insights.metric_value_operational_dashboard  
+where measure_cd = 'total_member_years_current_month' 
+    and patient_medicare_group_cd = '#NA' 
+    and org_level_category_cd = 'aco'
+    and attribution_type = 'as_was'
+    and substr(period_id,3,7) >= '2019-01' 
+order by ORG_GROUP_ID 
+    ,  period_id     
+    
+    
+USE DATABASE prod_cityblockdce;    --no data either attrib type
+USE DATABASE prod_canodce;
+
+Select org_id   
+    , period_id 
+    , measure_value_decimal AS totlForGroup 
+from insights.metric_value_operational_dashboard  
+where measure_cd = 'total_member_years_current_month' 
+    and patient_medicare_group_cd = '#NA' 
+    and org_level_category_cd = 'aco'
+    --and attribution_type = 'as_was'
+    and substr(period_id,3,7) >= '2019-01' 
+order by ORG_GROUP_ID 
+    ,  period_id       
+ 
