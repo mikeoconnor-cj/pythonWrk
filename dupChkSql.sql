@@ -124,3 +124,20 @@ WHERE load_set_id IN (45597,45598,40390,40417)
 SELECT * 
 FROM PROD_ILUMEDPI.ods.DCE_ALIGN --not there
 WHERE load_set_id IN (40410, 45615)
+
+
+USE DATABASE prod_adaugeopi; --multiple measues
+USE DATABASE prod_ilumedpi; --multiple measues
+USE DATABASE prod_cityblockdce;    --only *some* annual wellness visit measures
+USE DATABASE prod_canodce;  --only *some* annual wellness visit measures
+USE DATABASE prod_latitudedc; --only *some* annual wellness visit measures
+USE DATABASE prod_bluerockdc; --only *some* annual wellness visit measures
+USE DATABASE prod_intermntutdc; --only *some* annual wellness visit measures
+  
+SELECT org_id
+  , measure_cd
+from insights.metric_value_operational_dashboard  
+GROUP BY org_id
+  , measure_cd
+ORDER BY org_id
+  , measure_cd
