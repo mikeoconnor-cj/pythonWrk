@@ -141,3 +141,25 @@ GROUP BY org_id
   , measure_cd
 ORDER BY org_id
   , measure_cd
+
+
+
+  --13 members impacted      
+SELECT DISTINCT FK_PATIENT_ID 
+FROM
+(
+    --duplicates:
+        SELECT ATTRIBUTION_TYPE
+        ,FK_PATIENT_ID
+        ,MONTH_CD
+        , count(*) AS rowsDuped 
+        FROM INSIGHTS.patient_x_month 
+        --WHERE ATTRIBUTION_TYPE <> 'as_was' 
+            --just 'as_was' has dups
+            --with 'as_was', some members have 2 diff: at_time_primary_prov_nh
+            --the duplicates quadruplicate because there's a self-join: at_time_attr_pr 
+        GROUP BY ATTRIBUTION_TYPE
+        ,FK_PATIENT_ID
+        ,MONTH_CD
+        HAVING count(*) > 1    
+) a  
