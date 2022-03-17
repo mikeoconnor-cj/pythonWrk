@@ -163,3 +163,29 @@ FROM
         ,MONTH_CD
         HAVING count(*) > 1    
 ) a  
+
+
+USE WAREHOUSE local_michaeloconnor;
+USE DATABASE int_CANODCE_fe; --up to Feb '21.. then Jan '22
+--int_INTERMNTUTDC_fe; --up to Feb '21.. then Jan '22
+--int_BLUEROCKDC_fe; --up to Feb '21.. then Jan '22
+--int_LATITUDEDC_fe; --up to Feb '21.. then Jan '22
+--int_cityblockdce_fe; --up to Feb '21.. then Jan '22
+--int_adaugeopi_fe; --ok 
+--int_ilumedpi_fe --ok
+
+Select org_id   
+    , period_id 
+    , measure_value_decimal AS totlForGroup 
+from insights.metric_value_operational_dashboard  
+where measure_cd = 'total_avg_hcc_risk_current_month'
+    and patient_medicare_group_cd = '#NA' 
+    and org_level_category_cd = 'aco'
+    and attribution_type = 'as_was'
+    and substr(period_id,3,7) >= '2019-01' 
+order by ORG_GROUP_ID 
+    ,  period_id  
+
+
+
+  
