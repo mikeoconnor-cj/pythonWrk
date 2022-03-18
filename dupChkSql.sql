@@ -163,3 +163,67 @@ FROM
         ,MONTH_CD
         HAVING count(*) > 1    
 ) a  
+
+
+USE WAREHOUSE local_michaeloconnor;
+USE DATABASE int_CANODCE_fe; --up to Feb '21.. then Jan '22
+--int_INTERMNTUTDC_fe; --up to Feb '21.. then Jan '22
+--int_BLUEROCKDC_fe; --up to Feb '21.. then Jan '22
+--int_LATITUDEDC_fe; --up to Feb '21.. then Jan '22
+--int_cityblockdce_fe; --up to Feb '21.. then Jan '22
+--int_adaugeopi_fe; --ok 
+--int_ilumedpi_fe --ok
+
+Select org_id   
+    , period_id 
+    , measure_value_decimal AS totlForGroup 
+from insights.metric_value_operational_dashboard  
+where measure_cd = 'total_avg_hcc_risk_current_month'
+    and patient_medicare_group_cd = '#NA' 
+    and org_level_category_cd = 'aco'
+    and attribution_type = 'as_was'
+    and substr(period_id,3,7) >= '2019-01' 
+order by ORG_GROUP_ID 
+    ,  period_id  
+
+
+
+SELECT *
+FROM prod_ADAUGEO.ODS.NH_NETWORK_MODEL_5_PRVDR --looks ok
+ORDER BY LOAD_PERIOD DESC
+SELECT *
+FROM PROD_ADAUGEO.STG.SSF_NH_NETWORK_5_PRVDR_V01 
+ORDER BY DAG_RUN_ID desc
+SELECT *
+FROM prod_ADAUGEO.ODS.NH_NETWORK_MODEL_4_TIN --no data
+ORDER BY LOAD_PERIOD DESC
+SELECT *
+FROM PROD_ADAUGEO.stg.SSF_NH_NETWORK_4_TIN_V01 --no data
+ORDER BY DAG_RUN_ID desc
+SELECT *
+FROM prod_ADAUGEO.ODS.NH_NETWORK_MODEL_3_FAC --no data
+ORDER BY LOAD_PERIOD DESC
+SELECT *
+FROM PROD_ADAUGEO.stg.SSF_NH_NETWORK_3_FAC_V01 --no data
+ORDER BY DAG_RUN_ID desc
+SELECT *
+FROM prod_ADAUGEO.ODS.NH_NETWORK_MODEL_2_GRP --no data
+ORDER BY LOAD_PERIOD DESC
+SELECT *
+FROM PROD_ADAUGEO.stg.SSF_NH_NETWORK_2_GRP_V01 --no data
+ORDER BY DAG_RUN_ID desc
+SELECT *
+FROM prod_ADAUGEO.ODS.NH_NETWORK_MODEL_1_NET --looks ok
+ORDER BY LOAD_PERIOD DESC
+SELECT *
+FROM PROD_ADAUGEO.stg.SSF_NH_NETWORK_1_NET_V01 --looks ok
+ORDER BY DAG_RUN_ID desc
+SELECT *
+FROM prod_ADAUGEO.ODS.NH_NETWORK_MODEL_0_HDR --looks ok
+ORDER BY LOAD_PERIOD DESC
+SELECT *
+FROM PROD_ADAUGEO.stg.SSF_NH_NETWORK_0_HDR_V01 --looks ok
+ORDER BY DAG_RUN_ID desc
+SELECT *
+from PROD_ADAUGEOPI.insights.profile_list_physician_layup --load_ts: 3/17/22
+--example primary_provider_network_id: cj_net|ADAUGEOPI|ADAUGEODC
