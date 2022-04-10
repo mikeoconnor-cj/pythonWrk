@@ -231,7 +231,7 @@ from PROD_ADAUGEOPI.insights.profile_list_physician_layup --load_ts: 3/17/22
 
 --network advantage -collaborative health systems
 
-
+select count(1) over() total_rows, * from (
 SELECT 
   alignment_period
   ,year
@@ -298,3 +298,58 @@ ORDER BY
   ,provider_type
   ,year 
   ,provider_npi) a   where 1=1  AND "PROVIDER_NPI" IN ('1982750881')   
+
+
+--problem org
+
+SELECT load_period
+  , src_measure_category_label
+  , src_measure_cd
+  , SRC_THREE_YR_MEAN 
+FROM prod_a1052.ods.CCLF_BENCHMARK_1_DETAIL 
+WHERE record_status_cd = 'a'
+  AND load_period IN ('y-2020', 'y-2021')
+  AND src_measure_category_label LIKE '%Expenditures%'  
+ORDER BY load_period, src_measure_category_label, src_measure_cd
+
+SELECT *
+FROM PROD_A1052.insights.metric_value_bnmrk_x_qexpu
+WHERE QUARTER_CD in ('q-2020-4','q-2021-1','q-2021-2','q-2021-3','q-2021-4') 
+ORDER BY QUARTER_CD, MEDICARE_COHORT 
+
+
+--staging table
+SELECT *  --in 2020, rec_num is populatd in staging table
+FROM prod_a1052.STG.ssf_CCLF_BENCHMARK_1_DETAIL_v05 
+WHERE THREE_YR_MEAN IS NOT null
+ORDER BY dag_run_id, MEASURE_LABEL 
+
+
+--correct org... ? by chance in 2021 ?
+
+SELECT load_period
+  , src_measure_category_label
+  , src_measure_cd
+  , SRC_THREE_YR_MEAN 
+FROM prod_a3632.ods.CCLF_BENCHMARK_1_DETAIL 
+WHERE record_status_cd = 'a'
+  AND load_period IN ('y-2020', 'y-2021')
+  AND src_measure_category_label LIKE '%Expenditures%'
+ORDER BY load_period, src_measure_category_label, src_measure_cd
+
+
+SELECT *
+FROM PROD_A3632.insights.metric_value_bnmrk_x_qexpu
+WHERE QUARTER_CD in ('q-2020-4','q-2021-1','q-2021-2','q-2021-3','q-2021-4') 
+ORDER BY QUARTER_CD, MEDICARE_COHORT 
+
+--staging table
+
+SELECT *  --in 2020, rec_num is populated in staging table
+FROM prod_a3632.STG.ssf_CCLF_BENCHMARK_1_DETAIL_v05 
+WHERE THREE_YR_MEAN IS NOT null
+ORDER BY dag_run_id, MEASURE_LABEL 
+
+
+
+--downstream impact: aco_x_benchmark
