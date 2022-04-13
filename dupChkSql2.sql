@@ -227,3 +227,129 @@ ORDER BY DAG_RUN_ID desc
 SELECT *
 from PROD_ADAUGEOPI.insights.profile_list_physician_layup --load_ts: 3/17/22
 --example primary_provider_network_id: cj_net|ADAUGEOPI|ADAUGEODC
+
+
+--network advantage -collaborative health systems
+
+select count(1) over() total_rows, * from (
+SELECT 
+  alignment_period
+  ,year
+  ,provider_type
+  ,provider_npi
+  ,provider_name
+  ,primary_specialty_flag
+  ,organization_npi
+  ,organization_name
+  ,org_fqhc_flag
+  ,org_rhc_flag
+  ,SUBSTRING(org_county_cd,1,5) AS org_county_cd
+  ,org_county_name
+  ,bene_state
+  ,SUBSTRING(bene_county_cd,1,5) AS bene_county_cd
+  ,bene_county_name
+  ,SUBSTRING(bene_cbsa_cd,1,5) as bene_cbsa_cd
+  ,bene_cbsa_name
+  ,bene_cohort
+  ,bene_cnt_aligned
+  ,bene_avg_adj_hcc
+  ,bene_cnt_strong_alignment
+  ,bene_cnt_loose_alignment
+  ,bene_cnt_align_alive
+  ,bene_cnt_high_needs_eligible
+  ,bene_cnt_hlthy_simplecc_null
+  ,bene_cnt_frail_elderly
+  ,bene_cnt_maj_min_compl_cc
+  ,bene_cnt_under65_dis_esrd
+  ,bene_cnt_aligned_eligible
+  ,bene_total_member_months
+  ,pqem_allowed
+  ,pqem_spend
+  ,pqem_spend_by_align_prov
+  ,pqem_partb_spend
+  ,pqem_op_fqhc_spend
+  ,pqem_op_rhc_spend
+  ,pqem_op_cah_spend
+  ,partb_spend
+  ,inpatient_spend
+  ,outpatient_spend
+  ,hha_spend
+  ,snf_spend
+  ,hospice_spend
+  ,dme_spend
+  ,total_spend
+  ,group_level_1_id
+  ,group_level_1_name
+  ,group_level_2_id
+  ,group_level_2_name
+  ,group_level_3_id
+  ,group_level_3_name
+  ,CASE WHEN
+    network_1_id = '#NA' THEN 'Out of Network'
+      ELSE 'In Network'
+      END AS network_flag
+  ,network_1_id
+  ,network_1_name
+FROM vrdc.dc_provider_list_network
+WHERE try_cast(year as int) >= 2017 AND network_1_id NOT LIKE '%All'
+   
+ORDER BY
+  alignment_period
+  ,provider_type
+  ,year 
+  ,provider_npi) a   where 1=1  AND "PROVIDER_NPI" IN ('1982750881')   
+
+
+--problem org
+
+SELECT load_period
+  , src_measure_category_label
+  , src_measure_cd
+  , SRC_THREE_YR_MEAN 
+FROM prod_a1052.ods.CCLF_BENCHMARK_1_DETAIL 
+WHERE record_status_cd = 'a'
+  AND load_period IN ('y-2020', 'y-2021')
+  AND src_measure_category_label LIKE '%Expenditures%'  
+ORDER BY load_period, src_measure_category_label, src_measure_cd
+
+SELECT *
+FROM PROD_A1052.insights.metric_value_bnmrk_x_qexpu
+WHERE QUARTER_CD in ('q-2020-4','q-2021-1','q-2021-2','q-2021-3','q-2021-4') 
+ORDER BY QUARTER_CD, MEDICARE_COHORT 
+
+
+--staging table
+SELECT *  --in 2020, rec_num is populatd in staging table
+FROM prod_a1052.STG.ssf_CCLF_BENCHMARK_1_DETAIL_v05 
+WHERE THREE_YR_MEAN IS NOT null
+ORDER BY dag_run_id, MEASURE_LABEL 
+
+
+--correct org... ? by chance in 2021 ?
+
+SELECT load_period
+  , src_measure_category_label
+  , src_measure_cd
+  , SRC_THREE_YR_MEAN 
+FROM prod_a3632.ods.CCLF_BENCHMARK_1_DETAIL 
+WHERE record_status_cd = 'a'
+  AND load_period IN ('y-2020', 'y-2021')
+  AND src_measure_category_label LIKE '%Expenditures%'
+ORDER BY load_period, src_measure_category_label, src_measure_cd
+
+
+SELECT *
+FROM PROD_A3632.insights.metric_value_bnmrk_x_qexpu
+WHERE QUARTER_CD in ('q-2020-4','q-2021-1','q-2021-2','q-2021-3','q-2021-4') 
+ORDER BY QUARTER_CD, MEDICARE_COHORT 
+
+--staging table
+
+SELECT *  --in 2020, rec_num is populated in staging table
+FROM prod_a3632.STG.ssf_CCLF_BENCHMARK_1_DETAIL_v05 
+WHERE THREE_YR_MEAN IS NOT null
+ORDER BY dag_run_id, MEASURE_LABEL 
+
+
+
+--downstream impact: aco_x_benchmark
