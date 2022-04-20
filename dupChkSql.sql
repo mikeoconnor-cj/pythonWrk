@@ -489,3 +489,120 @@ from b
 -- force pick 1 risk score in a given month to resolve dupes (hot fix)
 where row_n =1
 ;
+
+
+
+--Patient List
+
+select count(1) over() total_rows, * from (WITH denorm AS (
+select distinct org_group_id, tin_name
+from insights.metric_value_denormalized_total
+where org_level_category_cd = 'at_time_tin'
+),
+chronics as (
+SELECT DISTINCT
+month_cd,
+fk_patient_id,
+listagg(distinct measure_id, ',') conditions
+FROM insights.patient_x_chronic_condition_month
+WHERE measure_id IN ('emr_chronic_condition_stroke_transient_ischemic_attack',
+'emr_chronic_condition_obesity',
+'emr_chronic_condition_diabetes',
+'emr_chronic_condition_ischemic_heart_disease',
+'emr_chronic_condition_heart_failure',
+'emr_chronic_condition_chronic_obstructive_pulmonary_disease_and_bronchiectasis',
+'emr_chronic_condition_asthma',
+'emr_chronic_condition_ischemic_heart_disease',
+'emr_chronic_condition_prostate_cancer',
+'emr_chronic_condition_lung_cancer',
+'emr_chronic_condition_female_male_breast_cancer',
+'emr_chronic_condition_endometrial_cancer',
+'emr_chronic_condition_colorectal_cancer')
+AND active_flag = TRUE
+AND chronic_condition_source_cd = 'ccw'
+group by
+month_cd,
+fk_patient_id
+),
+er_visits as (
+select
+fk_patient_id,
+count(distinct pk_claim_id) last_3_mo_er_visits
+from insights.metric_value_er
+where from_dt <= to_date(right( 'm-2021-12',7),'YYYY-MM') 
+  and from_dt >= to_date(right( 'm-2021-12',7),'YYYY-MM') - INTERVAL '3 months'
+group by
+fk_patient_id
+)
+select
+org_id
+,last_name
+,first_name
+,pt.bene_mbi_id
+,case when pat.gender_cd = '1' then 'Male' else 'Female' end as gender_cd
+,case when split_part(at_time_tin_fac_nh,'|',3) = '' then split_part(at_time_tin_fac_nh,'|',2) else  split_part(at_time_tin_fac_nh,'|',3) end as at_time_tin_fac_nh
+,denorm.tin_name as tin_name
+,split_part(at_time_primary_prov_nh,'|',2) as at_time_primary_prov_nh
+,prvdr_name
+,current_attributed_status
+,churned_prev_quarter
+,reason_for_churn
+,split_part(frailty_group,'|',2) as frailty_group
+,split_part(medicare_cohort,'|',2) as medicare_cohort
+,last_awv
+,split_part(last_awv_provider,'|',2) as last_awv_provider
+,cast(date_of_birth as date) as date_of_birth
+,cast(date_of_death as date) as date_of_death
+,alzheimers_dementia_flag
+,anxiety_flag
+,cancer_flag
+,chronic_heart_failure_flag
+,chronic_kidney_disease_flag
+,copd_asthma_flag
+,depression_flag
+,diabetes_flag
+,obesity_flag
+,stroke_flag
+,hosp_ip_paid_amt
+,op_paid_amt
+,snf_paid_amt
+,hh_paid_amt
+,hospice_paid_amt
+,percent_ccm_compliance
+,ccm_eligible_instances
+,percent_tcm_compliance
+,tcm_eligible_instances
+,partbdme_paid_amt
+,partb_paid_amt
+,total_paid_amt
+,ip_admits
+,er_admits
+,risk_score
+,awv_eligible_instances
+,attribution_type
+,pt.month_cd
+,patient_id
+,addr_zip as patient_zip
+,coalesce(chronics.conditions,'None') as conditions
+,coalesce(regexp_count(conditions,',')+1,0) as count_conditions
+, coalesce(er_visits.last_3_mo_er_visits,0) as last_3_mo_er_visits
+,case when last_3_mo_er_visits is not null then 1 else 0 end as er_flag
+,case when count_conditions + er_flag > 4 then 'Level 1'
+when count_conditions + er_flag > 2 then 'Level 2'
+when count_conditions + er_flag > 0 then 'Level 3'
+when count_conditions + er_flag = 0 then 'Level 4'
+END as patient_segment
+from insights.profile_list_patient_layup pt
+left join (select bene_mbi_id, gender_cd from insights.patient) pat
+on pat.bene_mbi_id = pt.bene_mbi_id
+left join denorm
+on pt.at_time_tin_fac_nh = denorm.org_group_id
+LEFT JOIN chronics
+ON pt.month_cd = chronics.month_cd
+AND pt.patient_id = chronics.fk_patient_id
+LEFT JOIN er_visits
+ON pt.patient_id = er_visits.fk_patient_id
+where attribution_type = 'as_was'
+and pt.month_cd >  'm-2021-12'
+
+) a   
