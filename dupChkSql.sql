@@ -489,3 +489,210 @@ from b
 -- force pick 1 risk score in a given month to resolve dupes (hot fix)
 where row_n =1
 ;
+
+
+
+--Patient List
+
+select count(1) over() total_rows, * from (WITH denorm AS (
+select distinct org_group_id, tin_name
+from insights.metric_value_denormalized_total
+where org_level_category_cd = 'at_time_tin'
+),
+chronics as (
+SELECT DISTINCT
+month_cd,
+fk_patient_id,
+listagg(distinct measure_id, ',') conditions
+FROM insights.patient_x_chronic_condition_month
+WHERE measure_id IN ('emr_chronic_condition_stroke_transient_ischemic_attack',
+'emr_chronic_condition_obesity',
+'emr_chronic_condition_diabetes',
+'emr_chronic_condition_ischemic_heart_disease',
+'emr_chronic_condition_heart_failure',
+'emr_chronic_condition_chronic_obstructive_pulmonary_disease_and_bronchiectasis',
+'emr_chronic_condition_asthma',
+'emr_chronic_condition_ischemic_heart_disease',
+'emr_chronic_condition_prostate_cancer',
+'emr_chronic_condition_lung_cancer',
+'emr_chronic_condition_female_male_breast_cancer',
+'emr_chronic_condition_endometrial_cancer',
+'emr_chronic_condition_colorectal_cancer')
+AND active_flag = TRUE
+AND chronic_condition_source_cd = 'ccw'
+group by
+month_cd,
+fk_patient_id
+),
+er_visits as (
+select
+fk_patient_id,
+count(distinct pk_claim_id) last_3_mo_er_visits
+from insights.metric_value_er
+where from_dt <= to_date(right( 'm-2021-12',7),'YYYY-MM') 
+  and from_dt >= to_date(right( 'm-2021-12',7),'YYYY-MM') - INTERVAL '3 months'
+group by
+fk_patient_id
+)
+select
+org_id
+,last_name
+,first_name
+,pt.bene_mbi_id
+,case when pat.gender_cd = '1' then 'Male' else 'Female' end as gender_cd
+,case when split_part(at_time_tin_fac_nh,'|',3) = '' then split_part(at_time_tin_fac_nh,'|',2) else  split_part(at_time_tin_fac_nh,'|',3) end as at_time_tin_fac_nh
+,denorm.tin_name as tin_name
+,split_part(at_time_primary_prov_nh,'|',2) as at_time_primary_prov_nh
+,prvdr_name
+,current_attributed_status
+,churned_prev_quarter
+,reason_for_churn
+,split_part(frailty_group,'|',2) as frailty_group
+,split_part(medicare_cohort,'|',2) as medicare_cohort
+,last_awv
+,split_part(last_awv_provider,'|',2) as last_awv_provider
+,cast(date_of_birth as date) as date_of_birth
+,cast(date_of_death as date) as date_of_death
+,alzheimers_dementia_flag
+,anxiety_flag
+,cancer_flag
+,chronic_heart_failure_flag
+,chronic_kidney_disease_flag
+,copd_asthma_flag
+,depression_flag
+,diabetes_flag
+,obesity_flag
+,stroke_flag
+,hosp_ip_paid_amt
+,op_paid_amt
+,snf_paid_amt
+,hh_paid_amt
+,hospice_paid_amt
+,percent_ccm_compliance
+,ccm_eligible_instances
+,percent_tcm_compliance
+,tcm_eligible_instances
+,partbdme_paid_amt
+,partb_paid_amt
+,total_paid_amt
+,ip_admits
+,er_admits
+,risk_score
+,awv_eligible_instances
+,attribution_type
+,pt.month_cd
+,patient_id
+,addr_zip as patient_zip
+,coalesce(chronics.conditions,'None') as conditions
+,coalesce(regexp_count(conditions,',')+1,0) as count_conditions
+, coalesce(er_visits.last_3_mo_er_visits,0) as last_3_mo_er_visits
+,case when last_3_mo_er_visits is not null then 1 else 0 end as er_flag
+,case when count_conditions + er_flag > 4 then 'Level 1'
+when count_conditions + er_flag > 2 then 'Level 2'
+when count_conditions + er_flag > 0 then 'Level 3'
+when count_conditions + er_flag = 0 then 'Level 4'
+END as patient_segment
+from insights.profile_list_patient_layup pt
+left join (select bene_mbi_id, gender_cd from insights.patient) pat
+on pat.bene_mbi_id = pt.bene_mbi_id
+left join denorm
+on pt.at_time_tin_fac_nh = denorm.org_group_id
+LEFT JOIN chronics
+ON pt.month_cd = chronics.month_cd
+AND pt.patient_id = chronics.fk_patient_id
+LEFT JOIN er_visits
+ON pt.patient_id = er_visits.fk_patient_id
+where attribution_type = 'as_was'
+and pt.month_cd >  'm-2021-12'
+
+) a   
+
+
+USE WAREHOUSE local_michaeloconnor;
+USE DATABASE local_michaeloconnor;
+
+create or replace TABLE PUBLIC.PARTICIPANT_LIST_NA (
+  ALIGNMENT_PERIOD VARCHAR(12),
+  YEAR VARCHAR(4),
+  PROVIDER_TYPE VARCHAR(25),
+  PROVIDER_NPI VARCHAR(10),
+  PROVIDER_NAME VARCHAR(150),
+  PRIMARY_SPECIALTY_FLAG BOOLEAN,
+  ORGANIZATION_NPI VARCHAR(12),   --source outputs a decimal 1902095078.0  VARCHAR(10)
+  ORGANIZATION_NAME VARCHAR(150),
+  ORG_FQHC_FLAG BOOLEAN,
+  ORG_RHC_FLAG BOOLEAN,
+  ORG_COUNTY_CD VARCHAR(10),
+  ORG_COUNTY_NAME VARCHAR(50),
+  BENE_STATE VARCHAR(50),
+  BENE_COUNTY_CD VARCHAR(10),
+  BENE_COUNTY_NAME VARCHAR(50),
+  BENE_CBSA_CD VARCHAR(10),
+  BENE_CBSA_NAME VARCHAR(50),
+  BENE_COHORT VARCHAR(25),
+  BENE_CNT_ALIGNED VARCHAR(38),
+  BENE_AVG_ADJ_HCC VARCHAR(16),  --source: numeric value '' is not recognized ... row 2119  NUMBER(14,2)
+  BENE_CNT_STRONG_ALIGNMENT VARCHAR(38),
+  BENE_CNT_LOOSE_ALIGNMENT VARCHAR(38),
+  BENE_CNT_ALIGN_ALIVE VARCHAR(38),
+  BENE_CNT_HIGH_NEEDS_ELIGIBLE VARCHAR(38),
+  BENE_CNT_HLTHY_SIMPLECC_NULL VARCHAR(38),
+  BENE_CNT_FRAIL_ELDERLY VARCHAR(38),
+  BENE_CNT_MAJ_MIN_COMPL_CC VARCHAR(38),
+  BENE_CNT_UNDER65_DIS_ESRD VARCHAR(38),
+  BENE_CNT_ALIGNED_ELIGIBLE VARCHAR(38),
+  BENE_TOTAL_MEMBER_MONTHS VARCHAR(38),
+  PQEM_ALLOWED VARCHAR(16),
+  PQEM_SPEND VARCHAR(16),
+  PQEM_SPEND_BY_ALIGN_PROV VARCHAR(16),
+  PQEM_PARTB_SPEND VARCHAR(16),
+  PQEM_OP_FQHC_SPEND VARCHAR(16),
+  PQEM_OP_RHC_SPEND VARCHAR(16),
+  PQEM_OP_CAH_SPEND VARCHAR(16),
+  PARTB_SPEND VARCHAR(16),
+  INPATIENT_SPEND VARCHAR(16),
+  OUTPATIENT_SPEND VARCHAR(16),
+  HHA_SPEND VARCHAR(16),
+  SNF_SPEND VARCHAR(16),
+  HOSPICE_SPEND VARCHAR(16),
+  DME_SPEND VARCHAR(16),
+  TOTAL_SPEND VARCHAR(16),
+  GROUP_LEVEL_1_ID VARCHAR(255),
+  GROUP_LEVEL_1_NAME VARCHAR(255),
+  GROUP_LEVEL_2_ID VARCHAR(255),
+  GROUP_LEVEL_2_NAME VARCHAR(255),
+  GROUP_LEVEL_3_ID VARCHAR(255),
+  GROUP_LEVEL_3_NAME VARCHAR(255),
+  NETWORK_FLAG VARCHAR(25),
+  NETWORK_1_ID VARCHAR(255),
+  NETWORK_1_NAME VARCHAR(255)
+)
+
+
+
+STAGE_FILE_FORMAT = ( TYPE = 'csv'
+            RECORD_DELIMITER = '\\n'
+            FIELD_DELIMITER = ','
+            FIELD_OPTIONALLY_ENCLOSED_BY = '"'
+            skip_header = 1
+            );
+           
+put file://D:\Users\michael.oconnor\Downloads\pythonHmWrk\Participants_0704202206.csv @public.%PARTICIPANT_LIST_NA;
+--LIST @%PARTICIPANT_LIST_NA;
+--SELECT * FROM @%PARTICIPANT_LIST_NA
+
+COPY INTO local_michaeloconnor.PUBLIC.PARTICIPANT_LIST_NA;
+
+SELECT * FROM local_michaeloconnor.public.PARTICIPANT_LIST_NA;  
+
+
+
+
+--QA-----
+
+SELECT count(*) --1,641,440
+FROM local_michaeloconnor.public.PARTICIPANT_LIST_NA;
+
+SELECT * --12 rows
+FROM local_michaeloconnor.public.PARTICIPANT_LIST_NA
+WHERE PROVIDER_NPI = '1982750881' 
