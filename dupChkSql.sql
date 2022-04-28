@@ -696,3 +696,14 @@ FROM local_michaeloconnor.public.PARTICIPANT_LIST_NA;
 SELECT * --12 rows
 FROM local_michaeloconnor.public.PARTICIPANT_LIST_NA
 WHERE PROVIDER_NPI = '1982750881' 
+
+
+SELECT *
+FROM prod_a1052.ods.CCLF_BENCHMARK_1_DETAIL 
+WHERE 
+record_status_cd = 'a'
+  AND SRC_MEASURE_CATEGORY_LABEL in (
+  '[G] 3-Year Weighted Average Annual Per Capita Expenditures ($)'
+  , '[R] Regionally-Adjusted Historical Benchmark Expenditures ($)'
+  )
+ORDER BY load_period, src_measure_category_label, src_measure_cd
