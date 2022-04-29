@@ -706,4 +706,29 @@ record_status_cd = 'a'
   '[G] 3-Year Weighted Average Annual Per Capita Expenditures ($)'
   , '[R] Regionally-Adjusted Historical Benchmark Expenditures ($)'
   )
-ORDER BY load_period, src_measure_category_label, src_measure_cd
+-- ORDER BY load_period, src_measure_category_label, src_measure_cd
+
+
+USE database prod_canodce;
+
+SELECT cclf9.SRC_CRNT_NUM 
+  , cclf9.FK_CRNT_BENE_ID 
+  , cclf9.SRC_PRVS_NUM 
+  , cclf9.FK_PRVS_BENE_ID 
+  , cclf9.SRC_PRVS_EFCTV_DT 
+  , cclf9.SRC_PRVS_OBSLT_DT 
+  , cclf8.*
+FROM ODS.CCLF_8_BENE_DEMO cclf8
+JOIN  ods.CCLF_9_BENE_XREF cclf9
+  ON cclf8.PK_BENE_ID = cclf9.FK_PRVS_BENE_ID 
+WHERE cclf8.RECORD_STATUS_CD = 'a'  
+  AND cclf9.RECORD_STATUS_CD = 'a'
+  AND cclf9.SRC_CRNT_NUM <> cclf9.SRC_PRVS_NUM 
+
+SELECT FK_CRNT_BENE_ID
+  , count(*)
+FROM ods.CCLF_9_BENE_XREF
+WHERE RECORD_STATUS_CD = 'a'
+GROUP BY FK_CRNT_BENE_ID
+HAVING count(*) > 1
+ORDER BY count(*)
