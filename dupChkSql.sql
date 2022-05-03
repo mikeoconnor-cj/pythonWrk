@@ -732,3 +732,36 @@ WHERE RECORD_STATUS_CD = 'a'
 GROUP BY FK_CRNT_BENE_ID
 HAVING count(*) > 1
 ORDER BY count(*)
+
+
+WITH curPrv
+AS 
+(
+SELECT cclf9.SRC_CRNT_NUM 
+  , cclf9.FK_CRNT_BENE_ID 
+  , cclf9.SRC_PRVS_NUM 
+  , cclf9.FK_PRVS_BENE_ID 
+  , cclf9.SRC_PRVS_EFCTV_DT 
+  , cclf9.SRC_PRVS_OBSLT_DT 
+  , cclf8.*
+FROM ODS.CCLF_8_BENE_DEMO cclf8
+JOIN  ods.CCLF_9_BENE_XREF cclf9
+  ON cclf8.PK_BENE_ID = cclf9.FK_PRVS_BENE_ID 
+WHERE cclf8.RECORD_STATUS_CD = 'a'  
+  AND cclf9.RECORD_STATUS_CD = 'a'
+  AND cclf9.SRC_CRNT_NUM <> cclf9.SRC_PRVS_NUM  
+)
+
+SELECT 'currentID' AS SOURCE
+  , * 
+FROM insights.PATIENT 
+WHERE PK_PATIENT_ID IN  (SELECT FK_CRNT_BENE_ID FROM curPrv)  
+
+UNION ALL 
+
+SELECT 'previousID' AS SOURCE
+  , * 
+FROM insights.PATIENT 
+WHERE PK_PATIENT_ID IN ( SELECT FK_PRVS_BENE_ID FROM curPrv)
+
+ORDER BY full_name, pk_patient_id
