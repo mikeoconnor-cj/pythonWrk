@@ -732,3 +732,53 @@ WHERE RECORD_STATUS_CD = 'a'
 GROUP BY FK_CRNT_BENE_ID
 HAVING count(*) > 1
 ORDER BY count(*)
+
+
+WITH curPrv
+AS 
+(
+SELECT cclf9.SRC_CRNT_NUM 
+  , cclf9.FK_CRNT_BENE_ID 
+  , cclf9.SRC_PRVS_NUM 
+  , cclf9.FK_PRVS_BENE_ID 
+  , cclf9.SRC_PRVS_EFCTV_DT 
+  , cclf9.SRC_PRVS_OBSLT_DT 
+  , cclf8.*
+FROM ODS.CCLF_8_BENE_DEMO cclf8
+JOIN  ods.CCLF_9_BENE_XREF cclf9
+  ON cclf8.PK_BENE_ID = cclf9.FK_PRVS_BENE_ID 
+WHERE cclf8.RECORD_STATUS_CD = 'a'  
+  AND cclf9.RECORD_STATUS_CD = 'a'
+  AND cclf9.SRC_CRNT_NUM <> cclf9.SRC_PRVS_NUM  
+)
+
+SELECT 'currentID' AS SOURCE
+  , * 
+FROM insights.PATIENT 
+WHERE PK_PATIENT_ID IN  (SELECT FK_CRNT_BENE_ID FROM curPrv)  
+
+UNION ALL 
+
+SELECT 'previousID' AS SOURCE
+  , * 
+FROM insights.PATIENT 
+WHERE PK_PATIENT_ID IN ( SELECT FK_PRVS_BENE_ID FROM curPrv)
+
+ORDER BY full_name, pk_patient_id
+
+
+SELECT '{orgDB}' as orgDB
+    , load_period 
+    , src_assgn_period 
+    , src_assgn_period_type_cd 
+    , src_bene_assgn_window_start_dt 
+    , src_bene_assgn_window_end_dt 
+    , src_mssp_aco_report_period_start_dt 
+    , src_hcc_start_dt 
+    , src_risk_score_start_dt 
+    , src_aco_track 
+    , src_performance_year 
+    , src_claims_processed_as_of_dt 
+FROM {orgDB}.ODS.CCLF_ASSGN_0_HEADER 
+WHERE record_status_cd = 'a'
+ORDER BY src_assgn_period
