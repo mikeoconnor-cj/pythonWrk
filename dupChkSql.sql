@@ -782,3 +782,18 @@ SELECT '{orgDB}' as orgDB
 FROM {orgDB}.ODS.CCLF_ASSGN_0_HEADER 
 WHERE record_status_cd = 'a'
 ORDER BY src_assgn_period
+
+based on row counts, this file got loaded into load_period q-2021-2 into PROD_A1052.ods.CCLF_ASSGN_2_TIN
+P.A1052.ACO.QALR.2021Q1.D219999.T0100000_1-1.csv
+the row count in raw is only 2,636  so that carries through in Chris F''s query of ODS.. so might be a CMS data issue
+based on row counts, this file got loaded into load_period q-2021-2 into PROD_A1052.ods.CCLF_ASSGN_2_TIN_NPI
+P.A1052.ACO.QALR.2021Q1.D219999.T0100000_1-4.csv
+the row count in raw is only 2,636  so that carries through in Chris F''s query of ODS.. so might be a CMS data issue
+
+we tried to load this file with 3,781 records into staging P.A1052.ACO.QALR.2021Q2.D219999.T0200000_1-1.csv under 
+a couple dag runs:  A1052_q-2021-2_2021-09-08T13:50:47.656353 and A1052_q-2021-2_2021-09-03T20:31:45.898322. 
+These records didn''t seem to make it into ODS .. in any load period..I think we''ll need to set the DAG RUN 
+so it winds up with a Q3 2021 load period in ODS.
+This file P.A1052.ACO.QALR.2021Q2.D219999.T0200000_1-4.csv with 4,128 records got loaded into into 
+load_period q-2021-3 into PROD_A1052.ods.CCLF_ASSGN_2_TIN_NPI
+
