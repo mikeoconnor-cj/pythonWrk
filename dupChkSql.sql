@@ -797,3 +797,22 @@ so it winds up with a Q3 2021 load period in ODS.
 This file P.A1052.ACO.QALR.2021Q2.D219999.T0200000_1-4.csv with 4,128 records got loaded into into 
 load_period q-2021-3 into PROD_A1052.ods.CCLF_ASSGN_2_TIN_NPI
 
+
+SELECT FK_BENE_ID 
+  , src_year --varchar(4)
+  , src_COPD --number(38,0) aka integer
+  , src_COPDM --number(38,0) aka integer.  M for mid year?
+  , src_COPDE --date E for 'event?' or 'ever?'  
+  --possible new field will be src_COPD_NEW --number(38,0) aka integer
+  --possible new field will be src_COPDE_NEW --date E for 'event?' or 'ever?' 
+  , SRC_CHF --number(38,0) aka integer
+  , SRC_CHFM --number(38,0) aka integer. M for mid year?
+  , SRC_CHFE --date E for 'event?' or 'ever?'
+  --possible new field will be src_CHF_NEW --number(38,0) aka integer
+  --possible new field will be src_CHFE_NEW --date  E for 'event?' or 'ever?' 
+  , LOAD_PERIOD 
+  , RECORD_STATUS_CD 
+FROM ods.MDPCP_BENED_YEAR 
+WHERE FK_BENE_ID IN (SELECT top 5 fk_bene_id FROM ods.MDPCP_BENED WHERE RECORD_STATUS_CD = 'a')
+AND RECORD_STATUS_CD = 'a'
+ORDER BY FK_BENE_ID, load_period DESC
