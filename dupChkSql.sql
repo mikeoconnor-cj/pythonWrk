@@ -1091,3 +1091,39 @@ HAVING count(*) > 1
 ORDER BY provider_npi
   , YEAR 
   , alignment_period
+
+
+
+  WITH dupCTE
+    AS
+    (
+    SELECT 'PATIENT_X_PCP_TIN_PROVIDER_MONTH' AS tableName
+        , sum(rowsDuped) AS rowsEffected
+        , count(*) AS pkRowCount
+    FROM
+        (
+        SELECT ATTR_STEP
+      , FK_PATIENT_ID
+      , FK_PCP_FACILITY_ID
+      , FK_PCP_PROVIDER_ID
+      , FK_PCP_TIN_ID
+      , MONTH_CD
+      , SOURCE_CD
+            , count(*) AS rowsDuped 
+        FROM PROD_A3632.INSIGHTS.PATIENT_X_PCP_TIN_PROVIDER_MONTH
+        --WHERE MONTH_CD <> 'm-2022-06' --no dups with this uncommented
+        GROUP BY ATTR_STEP
+      , FK_PATIENT_ID
+      , FK_PCP_FACILITY_ID
+      , FK_PCP_PROVIDER_ID
+      , FK_PCP_TIN_ID
+      , MONTH_CD
+      , SOURCE_CD
+        HAVING count(*) > 1
+        ) a 
+    ) 
+    SELECT tableName 
+        , 'PROD_A3632' AS orgDBName
+        , rowsEffected
+        , pkRowCount
+    FROM dupCTE
