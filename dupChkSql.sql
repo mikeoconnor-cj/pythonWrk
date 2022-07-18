@@ -1127,3 +1127,25 @@ ORDER BY provider_npi
         , rowsEffected
         , pkRowCount
     FROM dupCTE
+
+
+
+SELECT EFF_START_DT
+      ,LOAD_RUN_ID
+      ,PK_BENE_ID
+      ,SRC_BENE_RNG_BGN_DT
+      , count(*) AS rowsDuped 
+FROM ODS.cclf_8_bene_demo 
+WHERE record_status_cd = 'a'
+GROUP BY EFF_START_DT
+      ,LOAD_RUN_ID
+      ,PK_BENE_ID
+      ,SRC_BENE_RNG_BGN_DT
+HAVING count(*) > 1
+
+
+SELECT PK_PATIENT_ID
+  , count(*) AS rowsDuped 
+FROM insights.patient
+GROUP BY PK_PATIENT_ID
+HAVING count(*) > 1
