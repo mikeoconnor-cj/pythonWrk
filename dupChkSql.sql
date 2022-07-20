@@ -1149,3 +1149,34 @@ SELECT PK_PATIENT_ID
 FROM insights.patient
 GROUP BY PK_PATIENT_ID
 HAVING count(*) > 1
+
+
+SELECT BENE_MBI_ID 
+  , BENE_RNG_BGN_DT
+  , count(*) AS rwCt
+FROM prod_elationdce.stg.ssf_cclf_8_v26
+WHERE DAG_RUN_ID = 'ELATIONDCE_m-2022-06_2022-07-19T17:22:26.178963_47425' ----4,288 cases
+          --'ELATIONDCE_m-2022-05_2022-06-15T20:28:24.163253_45509' --no dups
+GROUP BY BENE_MBI_ID 
+  , BENE_RNG_BGN_DT
+HAVING count(*) > 1
+
+
+USE prod_elationdce --4,288 cases
+USE prod_adaugeopi -- no records
+USE prod_a1052 --no records
+USE prod_a2024 --no records
+USE prod_canodce --no records
+
+SELECT BENE_MBI_ID 
+  , BENE_RNG_BGN_DT
+  , count(*) AS rwCt
+FROM stg.ssf_cclf_8_v26
+WHERE DAG_RUN_ID = 
+(
+    SELECT max(DAG_RUN_ID)
+    FROM stg.ssf_cclf_8_v26
+)
+GROUP BY BENE_MBI_ID 
+  , BENE_RNG_BGN_DT
+HAVING count(*) > 1
